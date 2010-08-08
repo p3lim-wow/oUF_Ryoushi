@@ -2,7 +2,7 @@
 ## Author: p3lim
 ## Version: Alpha
 ## Title: oUF Ryoushi
-## Notes: Layout based around playing a Hunter
+## Notes: Layout based around a Hunter
 ## RequiredDeps: oUF
 
 oUF_Ryoushi.lua

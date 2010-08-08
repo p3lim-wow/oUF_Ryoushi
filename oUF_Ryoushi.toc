@@ -1,0 +1,8 @@
+## Interface: 30300
+## Author: p3lim
+## Version: Alpha
+## Title: oUF Ryoushi
+## Notes: Layout based around playing a Hunter
+## RequiredDeps: oUF
+
+oUF_Ryoushi.lua

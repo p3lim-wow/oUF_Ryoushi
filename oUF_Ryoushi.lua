@@ -16,7 +16,7 @@ local function SpawnMenu(self)
 end
 
 local function PostUpdatePower(element, unit, min, max)
-	element:GetParent().Health:SetHeight(max ~= 0 and 16 or 19) -- XXX: adjust this to the final heights for the target frame
+	element:GetParent().Health:SetHeight(max ~= 0 and 16 or 19)
 end
 
 local function PostCreateAura(element, button)
@@ -49,8 +49,6 @@ oUF.Tags['ryoushi:health'] = function(unit)
 
 	if(status) then
 		return status
-	elseif(unit == 'pet') then
-		return ('%s%d|r'):format(Hex(_COLORS.happiness[GetPetHappiness()]), min / max * 100)
 	elseif(unit == 'player' and min ~= max) then
 		return ('|cffff8080%d|r %d%%'):format(min - max, min / max * 100)
 	elseif(unit == 'target' and UnitCanAttack('player', unit)) then
@@ -66,43 +64,36 @@ oUF.Tags['ryoushi:power'] = function(unit)
 	local power = UnitPower(unit)
 	if(power > 0 and not UnitIsDeadOrGhost(unit)) then
 		local _, type = UnitPowerType(unit)
-		local colors = _COLORS.power
-		return ('%s%d|r'):format(Hex(colors[type] or colors.RUNES), power)
+		return ('%s%d|r'):format(Hex(_COLORS[type]), power)
 	end
 end
 
-oUF.TagEvents['ryoushi:name'] = 'UNIT_NAME_UPDATE UNIT_REACTION UNIT_FACTION'
-oUF.Tags['ryoushi:name'] = function(unit)
-	local reaction = UnitReaction(unit, 'player')
-	local _, class = UnitClass(unit)
-
-	local r, g, b = 1, 1, 1
-	if(unit ~= 'target' and class) then
-		r, g, b = unpack(_COLORS.class[class])
-	elseif((UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) or not UnitIsConnected(unit)) then
-		r, g, b = 3/5, 3/5, 3/5
-	elseif(not UnitIsPlayer(unit) and reaction) then
-		r, g, b = unpack(_COLORS.reaction[reaction])
-	elseif(UnitFactionGroup(unit) and UnitIsEnemy(unit, 'player') and UnitIsPVP(unit)) then
-		r, g, b = 1, 0, 0
-	end
-
-	return ('%s%s|r'):format(Hex(r, g, b), UnitName(unit))
+oUF.Tags['ryoushi:pet'] = function(unit)
+	return Hex(_COLORS.happiness[GetPetHappiness()]) .. _TAGS['perhp'](unit)
 end
 
-oUF.TagEvents['ryoushi:spell'] = 'UNIT_SPELLCAST_START UNIT_SPELLLCAST_CHANNEL_START' -- XXX: check if the events respond to cast-stop
 oUF.Tags['ryoushi:spell'] = function(unit)
-	local cast = UnitCastingInfo(unit)
-	local channel = UnitChannelInfo(unit)
-	return cast or channel
+	return UnitCastingInfo(unit) or UnitChannelInfo(unit)
+end
+
+oUF.TagEvents['ryoushi:reaction'] = 'UNIT_REACTION UNIT_FACTION'
+oUF.Tags['ryoushi:reaction'] = function(unit)
+	local reaction = UnitReaction(unit, 'player')
+	if((UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) or not UnitIsConnected(unit)) then
+		return Hex(3/5, 3/5, 3/5)
+	elseif(not UnitIsPlayer(unit) and reaction) then
+		return Hex(_COLORS.reaction[reaction])
+	elseif(UnitFactionGroup(unit) and UnitIsEnemy(unit, 'player') and UnitIsPVP(unit)) then
+		return Hex(1, 0, 0)
+	else
+		return Hex(1, 1, 1)
+	end
 end
 
 oUF.TagEvents['ryoushi:threat'] = 'UNIT_THREAT_LIST_UPDATE'
 oUF.Tags['ryoushi:threat'] = function(unit)
-	local tanking, status, percent = UnitDetailedThreatSituation(unit, unit..'target')
-	if(percent and percent > 0) then
-		return ('%s%d%%|r'):format(Hex(GetThreatStatusColor(status)), percent)
-	end
+	local _, _, percent = UnitDetailedThreatSituation(unit, unit..'target')
+	return percent and percent > 0 and percent
 end
 
 local UnitSpecific = {
@@ -129,7 +120,7 @@ local UnitSpecific = {
 		threat:SetPoint('CENTER', self.Health)
 		threat:SetFont(FONT, 8, 'OUTLINE')
 		threat:SetJustifyH('CENTER')
-		self:Tag(threat, '[ryoushi:threat]')
+		self:Tag(threat, '[threatcolor][ryoushi:threat]')
 	end,
 	target = function(self)
 		local power = CreateFrame('StatusBar', nil, self)
@@ -151,7 +142,7 @@ local UnitSpecific = {
 		name:SetPoint('LEFT', self.Health, 2, 0)
 		name:SetFont(FONT, 8, 'OUTLINE')
 		name:SetJustifyH('LEFT')
-		self:Tag(name, '[ryoushi:name< ][|cff0090ff>rare<|r]')
+		self:Tag(name, '[ryoushi:reaction][name<|r][ |cff0090ff>rare<|r]')
 
 		self.Debuffs.onlyShowPlayer = true
 	end,
@@ -161,7 +152,7 @@ local UnitSpecific = {
 		health:SetFont(FONT, 8, 'OUTLINE')
 		health:SetJustifyH('LEFT')
 		health.frequentUpdates = 1/4
-		self:Tag(health, '[ryoushi:health]')
+		self:Tag(health, '[ryoushi:pet<%]')
 	end
 }
 
@@ -180,7 +171,7 @@ local function Shared(self, unit)
 		local health = CreateFrame('StatusBar', nil, self)
 		health:SetPoint('TOPRIGHT')
 		health:SetPoint('TOPLEFT')
-		health:SetHeight(19) -- XXX: set the height
+		health:SetHeight(19)
 		health:SetStatusBarTexture(TEXTURE)
 		health.frequentUpdates = true
 		health.colorClass = true
@@ -202,26 +193,26 @@ local function Shared(self, unit)
 
 		local debuffs = CreateFrame('Frame', nil, self)
 		debuffs:SetPoint('TOPLEFT', self, 'TOPRIGHT', 4, 0)
-		debuffs:SetSize(100, 19) -- XXX: fix the width to the max amount
+		debuffs:SetSize(100, 19)
 		debuffs.initialAnchor = 'TOPLEFT'
 		debuffs.spacing = 4
-		debuffs.size = 19 -- XXX: set the size to match the frame height
+		debuffs.size = 19
 		debuffs.PostUpdateIcon = PostUpdateDebuff
 		self.Debuffs = debuffs
 
-		self:SetAttribute('initial-height', 19) -- XXX: set the right height
-		self:SetAttribute('initial-width', 200) -- XXX: set the right width
+		self:SetAttribute('initial-height', 19)
+		self:SetAttribute('initial-width', 200)
 	else
 		if(unit ~= 'pet') then
 			local name = self:CreateFontString(nil, 'OVERLAY')
 			name:SetAllPoints()
 			name:SetFont(FONT, 8, 'OUTLINE')
 			name:SetJustifyH('RIGHT')
-			self:Tag(name, '[ryoushi:name]')
+			self:Tag(name, '[raidcolor][name]')
 		end
 
-		self:SetAttribute('initial-height', 12) -- XXX: set the right height (little less than the player/target)
-		self:SetAttribute('initial-width', 100) -- XXX: set the right width (half of the player/target)
+		self:SetAttribute('initial-height', 12)
+		self:SetAttribute('initial-width', 100)
 	end
 
 	if(UnitSpecific[unit]) then

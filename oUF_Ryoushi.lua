@@ -192,7 +192,7 @@ local function Shared(self, unit)
 		self.Debuffs = debuffs
 
 		self:SetAttribute('initial-height', 19)
-		self:SetAttribute('initial-width', 200)
+		self:SetAttribute('initial-width', 220)
 	else
 		if(unit ~= 'pet') then
 			local name = self:CreateFontString(nil, 'OVERLAY')
@@ -203,7 +203,7 @@ local function Shared(self, unit)
 		end
 
 		self:SetAttribute('initial-height', 12)
-		self:SetAttribute('initial-width', 100)
+		self:SetAttribute('initial-width', 110)
 	end
 
 	if(UnitSpecific[unit]) then

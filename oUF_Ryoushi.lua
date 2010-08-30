@@ -97,14 +97,14 @@ local UnitSpecific = {
 		castbar.Spark = spark
 
 		local power = self.Health:CreateFontString(nil, 'OVERLAY')
-		power:SetPoint('LEFT', self.Health, 2, 0)
+		power:SetPoint('LEFT', 2, 0)
 		power:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		power:SetJustifyH('LEFT')
 		power.frequentUpdates = 1/10
 		self:Tag(power, '[ryoushi:power][ | >ryoushi:spell]')
 
 		local threat = self.Health:CreateFontString(nil, 'OVERLAY')
-		threat:SetPoint('CENTER', self.Health)
+		threat:SetPoint('CENTER')
 		threat:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		threat:SetJustifyH('CENTER')
 		self:Tag(threat, '[threatcolor][ryoushi:threat]')
@@ -126,8 +126,8 @@ local UnitSpecific = {
 		bg.multiplier = 1/3
 		power.bg = bg
 
-		local name = power:CreateFontString(nil, 'OVERLAY')
-		name:SetPoint('LEFT', self.Health, 2, 0)
+		local name = self.Health:CreateFontString(nil, 'OVERLAY')
+		name:SetPoint('LEFT', 2, 0)
 		name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		name:SetJustifyH('LEFT')
 		self:Tag(name, '[name][ |cff0090ff>rare<|r]')

@@ -197,7 +197,7 @@ local function Shared(self, unit)
 			local name = self:CreateFontString(nil, 'OVERLAY')
 			name:SetAllPoints()
 			name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
-			name:SetJustifyH('RIGHT')
+			name:SetJustifyH(unit == 'focus' and 'LEFT' or 'RIGHT')
 			self:Tag(name, '[raidcolor][name]')
 		end
 

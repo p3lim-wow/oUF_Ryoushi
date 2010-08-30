@@ -222,5 +222,5 @@ oUF:Factory(function(self)
 
 	self:Spawn('targettarget'):SetPoint('TOPRIGHT', target, 'BOTTOMRIGHT', 0, -1)
 	self:Spawn('focus'):SetPoint('TOPLEFT', target, 'BOTTOMLEFT', 0, -1)
-	self:Spawn('pet'):SetPoint('TOPRIGHT', player, 'BOTTOMRIGHT', 0, -1)
+	self:Spawn('pet'):SetPoint('TOPLEFT', player, 'BOTTOMLEFT', 0, -1)
 end)

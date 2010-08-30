@@ -112,14 +112,14 @@ local UnitSpecific = {
 
 		local power = self.Health:CreateFontString(nil, 'OVERLAY')
 		power:SetPoint('LEFT', self.Health, 2, 0)
-		power:SetFont(FONT, 8, 'OUTLINE')
+		power:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		power:SetJustifyH('LEFT')
 		power.frequentUpdates = 1/10
 		self:Tag(power, '[ryoushi:power][ | >ryoushi:spell]')
 
 		local threat = self.Health:CreateFontString(nil, 'OVERLAY')
 		threat:SetPoint('CENTER', self.Health)
-		threat:SetFont(FONT, 8, 'OUTLINE')
+		threat:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		threat:SetJustifyH('CENTER')
 		self:Tag(threat, '[threatcolor][ryoushi:threat]')
 	end,
@@ -142,7 +142,7 @@ local UnitSpecific = {
 
 		local name = power:CreateFontString(nil, 'OVERLAY')
 		name:SetPoint('LEFT', self.Health, 2, 0)
-		name:SetFont(FONT, 8, 'OUTLINE')
+		name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		name:SetJustifyH('LEFT')
 		self:Tag(name, '[ryoushi:reaction][name<|r][ |cff0090ff>rare<|r]')
 
@@ -151,7 +151,7 @@ local UnitSpecific = {
 	pet = function(self)
 		local health = self:CreateFontString(nil, 'OUTLINE')
 		health:SetAllPoints()
-		health:SetFont(FONT, 8, 'OUTLINE')
+		health:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		health:SetJustifyH('LEFT')
 		health.frequentUpdates = 1/4
 		self:Tag(health, '[ryoushi:pet<%]')
@@ -189,7 +189,7 @@ local function Shared(self, unit)
 
 		local value = health:CreateFontString(nil, 'OVERLAY')
 		value:SetPoint('RIGHT', health, -2, 0)
-		value:SetFont(FONT, 8, 'OUTLINE')
+		value:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		value:SetJustifyH('RIGHT')
 		value.frequentUpdates = 1/4
 		self:Tag(value, '[ryoushi:health]')
@@ -210,7 +210,7 @@ local function Shared(self, unit)
 		if(unit ~= 'pet') then
 			local name = self:CreateFontString(nil, 'OVERLAY')
 			name:SetAllPoints()
-			name:SetFont(FONT, 8, 'OUTLINE')
+			name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 			name:SetJustifyH('RIGHT')
 			self:Tag(name, '[raidcolor][name]')
 		end

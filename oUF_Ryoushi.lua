@@ -225,11 +225,15 @@ end
 
 oUF:RegisterStyle('Ryoushi', Shared)
 oUF:Factory(function(self)
-	self:DisableBlizzard('boss')
 	self:SetActiveStyle('Ryoushi')
-	self:Spawn('player') -- XXX: set the position
-	self:Spawn('target') -- XXX: set the position
-	self:Spawn('targettarget') -- XXX: set the position
-	self:Spawn('focus') -- XXX: set the position
-	self:Spawn('pet') -- XXX: set the position
+
+	local player = self:Spawn('player')
+	player:SetPoint('CENTER', -100, 100) -- XXX: find a better spot
+
+	local target = self:Spawn('target')
+	target:SetPoint('BOTTOM', player, 'TOP', 0, 16)
+
+	self:Spawn('targettarget'):SetPoint('TOPRIGHT', target, 'BOTTOMRIGHT', 0, -1)
+	self:Spawn('focus'):SetPoint('TOPLEFT', target, 'BOTTOMLEFT', 0, -1)
+	self:Spawn('pet'):SetPoint('TOPRIGHT', player, 'BOTTOMRIGHT', 0, -1)
 end)

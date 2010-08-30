@@ -76,20 +76,6 @@ oUF.Tags['ryoushi:spell'] = function(unit)
 	return UnitCastingInfo(unit) or UnitChannelInfo(unit)
 end
 
-oUF.TagEvents['ryoushi:reaction'] = 'UNIT_REACTION UNIT_FACTION'
-oUF.Tags['ryoushi:reaction'] = function(unit)
-	local reaction = UnitReaction(unit, 'player')
-	if((UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) or not UnitIsConnected(unit)) then
-		return Hex(3/5, 3/5, 3/5)
-	elseif(not UnitIsPlayer(unit) and reaction) then
-		return Hex(_COLORS.reaction[reaction])
-	elseif(UnitFactionGroup(unit) and UnitIsEnemy(unit, 'player') and UnitIsPVP(unit)) then
-		return Hex(1, 0, 0)
-	else
-		return Hex(1, 1, 1)
-	end
-end
-
 oUF.TagEvents['ryoushi:threat'] = 'UNIT_THREAT_LIST_UPDATE'
 oUF.Tags['ryoushi:threat'] = function(unit)
 	local _, _, percent = UnitDetailedThreatSituation(unit, unit..'target')
@@ -144,7 +130,7 @@ local UnitSpecific = {
 		name:SetPoint('LEFT', self.Health, 2, 0)
 		name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		name:SetJustifyH('LEFT')
-		self:Tag(name, '[ryoushi:reaction][name<|r][ |cff0090ff>rare<|r]')
+		self:Tag(name, '[name][ |cff0090ff>rare<|r]')
 
 		self.Debuffs.onlyShowPlayer = true
 	end,

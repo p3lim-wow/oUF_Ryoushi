@@ -64,7 +64,7 @@ oUF.Tags['ryoushi:power'] = function(unit)
 	local power = UnitPower(unit)
 	if(power > 0 and not UnitIsDeadOrGhost(unit)) then
 		local _, type = UnitPowerType(unit)
-		return ('%s%d|r'):format(Hex(_COLORS[type]), power)
+		return ('%s%d|r'):format(Hex(_COLORS.power[type]), power) -- XXX: check with vehicles
 	end
 end
 
@@ -101,7 +101,7 @@ local UnitSpecific = {
 		local castbar = CreateFrame('StatusBar', nil, self)
 		castbar:SetAllPoints(self.Health)
 		castbar:SetStatusBarColor(0, 0, 0, 0)
-		castbar:SetTopLevel(true)
+		castbar:SetToplevel(true)
 		self.Castbar = castbar
 
 		local spark = castbar:CreateTexture(nil, 'OVERLAY')
@@ -109,14 +109,14 @@ local UnitSpecific = {
 		spark:SetTexture(1, 1, 1)
 		castbar.Spark = spark
 
-		local power = self:CreateFontString(nil, 'OVERLAY')
+		local power = self.Health:CreateFontString(nil, 'OVERLAY')
 		power:SetPoint('LEFT', self.Health, 2, 0)
 		power:SetFont(FONT, 8, 'OUTLINE')
 		power:SetJustifyH('LEFT')
 		power.frequentUpdates = 1/10
 		self:Tag(power, '[ryoushi:power][ | >ryoushi:spell]')
 
-		local threat = self:CreateFontString(nil, 'OVERLAY')
+		local threat = self.Health:CreateFontString(nil, 'OVERLAY')
 		threat:SetPoint('CENTER', self.Health)
 		threat:SetFont(FONT, 8, 'OUTLINE')
 		threat:SetJustifyH('CENTER')
@@ -135,6 +135,7 @@ local UnitSpecific = {
 
 		local bg = power:CreateTexture(nil, 'BORDER')
 		bg:SetAllPoints()
+		bg:SetTexture(TEXTURE)
 		bg.multiplier = 1/3
 		power.bg = bg
 
@@ -181,6 +182,7 @@ local function Shared(self, unit)
 
 		local bg = health:CreateTexture(nil, 'BORDER')
 		bg:SetAllPoints()
+		bg:SetTexture(TEXTURE)
 		bg.multiplier = 1/3
 		health.bg = bg
 
@@ -197,6 +199,7 @@ local function Shared(self, unit)
 		debuffs.initialAnchor = 'TOPLEFT'
 		debuffs.spacing = 4
 		debuffs.size = 19
+		debuffs.PostCreateIcon = PostCreateAura
 		debuffs.PostUpdateIcon = PostUpdateDebuff
 		self.Debuffs = debuffs
 

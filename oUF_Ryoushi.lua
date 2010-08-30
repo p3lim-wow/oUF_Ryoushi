@@ -100,6 +100,7 @@ local UnitSpecific = {
 	player = function(self)
 		local castbar = CreateFrame('StatusBar', nil, self)
 		castbar:SetAllPoints(self.Health)
+		castbar:SetStatusBarTexture(TEXTURE)
 		castbar:SetStatusBarColor(0, 0, 0, 0)
 		castbar:SetToplevel(true)
 		self.Castbar = castbar

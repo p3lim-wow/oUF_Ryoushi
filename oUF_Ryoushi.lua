@@ -7,9 +7,7 @@
 
 local FONT = [=[Interface\AddOns\oUF_Ryoushi\semplice.ttf]=]
 local TEXTURE = [=[Interface\ChatFrame\ChatFrameBackground]=]
-local BACKDROP = {
-	bgFile = TEXTURE, insets = {top = -1, bottom = -1, left = -1, right = -1}
-}
+local BACKDROP = {bgFile = TEXTURE, edgeFile = TEXTURE, edgeSize = 1}
 
 local function SpawnMenu(self)
 	ToggleDropDownMenu(1, nil, _G[string.gsub(self.unit, '^.', string.upper)..'FrameDropDown'], 'cursor')
@@ -20,11 +18,15 @@ local function PostUpdatePower(element, unit, min, max)
 end
 
 local function PostCreateAura(element, button)
-	button:SetBackdrop(BACKDROP)
-	button:SetBackdropColor(0, 0, 0)
+	local bg = CreateFrame('Frame', nil, button)
+	bg:SetPoint('TOPRIGHT', 1, 1)
+	bg:SetPoint('BOTTOMLEFT', -1, -1)
+	bg:SetBackdrop(BACKDROP)
+	bg:SetBackdropColor(0, 0, 0, 0)
+	bg:SetBackdropBorderColor(0, 0, 0)
+
 	button.cd:SetReverse()
 	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	button.icon:SetDrawLayer('ARTWORK')
 end
 
 local function PostUpdateDebuff(element, unit, button, index)
@@ -120,11 +122,12 @@ local UnitSpecific = {
 		power.PostUpdate = PostUpdatePower
 		self.Power = power
 
-		local bg = power:CreateTexture(nil, 'BORDER')
-		bg:SetAllPoints()
-		bg:SetTexture(TEXTURE)
-		bg.multiplier = 1/3
-		power.bg = bg
+		local bg = CreateFrame('Frame', nil, self)
+		bg:SetPoint('TOPRIGHT', power, 1, 1)
+		bg:SetPoint('BOTTOMLEFT', power, -1, -1)
+		bg:SetBackdrop(BACKDROP)
+		bg:SetBackdropColor(0, 0, 0, 0.5)
+		bg:SetBackdropBorderColor(0, 0, 0)
 
 		local name = self.Health:CreateFontString(nil, 'OVERLAY')
 		name:SetPoint('LEFT', 2, 0)
@@ -153,9 +156,6 @@ local function Shared(self, unit)
 	self.menu = SpawnMenu
 
 	if(unit == 'player' or unit == 'target') then
-		self:SetBackdrop(BACKDROP)
-		self:SetBackdropColor(0, 0, 0)
-
 		local health = CreateFrame('StatusBar', nil, self)
 		health:SetPoint('TOPRIGHT')
 		health:SetPoint('TOPLEFT')
@@ -167,11 +167,12 @@ local function Shared(self, unit)
 		health.colorReaction = true
 		self.Health = health
 
-		local bg = health:CreateTexture(nil, 'BORDER')
-		bg:SetAllPoints()
-		bg:SetTexture(TEXTURE)
-		bg.multiplier = 1/3
-		health.bg = bg
+		local bg = CreateFrame('Frame', nil, self)
+		bg:SetPoint('TOPRIGHT', health, 1, 1)
+		bg:SetPoint('BOTTOMLEFT', health, -1, -1)
+		bg:SetBackdrop(BACKDROP)
+		bg:SetBackdropColor(0, 0, 0, 0.5)
+		bg:SetBackdropBorderColor(0, 0, 0)
 
 		local value = health:CreateFontString(nil, 'OVERLAY')
 		value:SetPoint('RIGHT', health, -2, 0)

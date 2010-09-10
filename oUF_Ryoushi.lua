@@ -30,12 +30,6 @@ local function PostCreateAura(element, button)
 	button.count:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 end
 
-local function PostUpdateDebuff(element, unit, button, index)
-	local _, _, _, _, type = UnitAura(unit, index, button.filter)
-	local color = DebuffTypeColor[type] or DebuffTypeColor.none
-	button:SetBackdropColor(color.r * 3/5, color.g * 3/5, color.b * 3/5)
-end
-
 local function ShortenValue(value)
 	if(value >= 1e6) then
 		return ('%.2fm'):format(value / 1e6):gsub('%.?0+([km])$', '%1')
@@ -189,7 +183,6 @@ local function Shared(self, unit)
 		debuffs.size = 19
 		debuffs.spacing = 4
 		debuffs.PostCreateIcon = PostCreateAura
-		debuffs.PostUpdateIcon = PostUpdateDebuff
 		self.Debuffs = debuffs
 
 		self:SetAttribute('initial-height', 19)

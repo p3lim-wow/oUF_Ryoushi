@@ -100,6 +100,17 @@ local UnitSpecific = {
 		self:Tag(power, '[ryoushi:power][ | >ryoushi:spell]')
 	end,
 	target = function(self)
+		local buffs = CreateFrame('Frame', nil, self)
+		buffs:SetPoint('BOTTOMRIGHT', self, 'TOPRIGHT', 0, 4)
+		buffs:SetSize(220, 40)
+		buffs.initialAnchor = 'BOTTOMRIGHT'
+		buffs.num = 22
+		buffs.size = 16.32
+		buffs.spacing = 4
+		buffs['growth-x'] = 'LEFT'
+		buffs.PostCreateIcon = PostCreateAura
+		self.Buffs = buffs
+
 		local power = CreateFrame('StatusBar', nil, self)
 		power:SetPoint('BOTTOMRIGHT')
 		power:SetPoint('BOTTOMLEFT')

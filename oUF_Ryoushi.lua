@@ -129,7 +129,7 @@ local UnitSpecific = {
 		name:SetJustifyH('LEFT')
 		self:Tag(name, '[name][ |cff0090ff>rare<|r]')
 
-		self.Debuffs.onlyShowPlayer = true
+		self.Debuffs.filter = 'PLAYER|HARMFUL'
 	end,
 	pet = function(self)
 		local health = self:CreateFontString(nil, 'OUTLINE')

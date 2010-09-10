@@ -171,10 +171,11 @@ local function Shared(self, unit)
 
 		local debuffs = CreateFrame('Frame', nil, self)
 		debuffs:SetPoint('TOPLEFT', self, 'TOPRIGHT', 4, 0)
-		debuffs:SetSize(100, 19)
+		debuffs:SetSize(134, 19)
 		debuffs.initialAnchor = 'TOPLEFT'
-		debuffs.spacing = 4
+		debuffs.num = 5
 		debuffs.size = 19
+		debuffs.spacing = 4
 		debuffs.PostCreateIcon = PostCreateAura
 		debuffs.PostUpdateIcon = PostUpdateDebuff
 		self.Debuffs = debuffs

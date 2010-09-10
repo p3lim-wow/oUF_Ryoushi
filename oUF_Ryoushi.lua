@@ -71,7 +71,7 @@ oUF.Tags['ryoushi:power'] = function(unit)
 end
 
 oUF.Tags['ryoushi:pet'] = function(unit)
-	return Hex(_COLORS.happiness[GetPetHappiness()]) .. _TAGS['perhp'](unit)
+	return GetPetHappiness() and Hex(_COLORS.happiness[GetPetHappiness()]) .. _TAGS['perhp'](unit)
 end
 
 oUF.Tags['ryoushi:spell'] = function(unit)

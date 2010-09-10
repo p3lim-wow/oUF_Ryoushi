@@ -42,18 +42,18 @@ end
 
 oUF.Tags['ryoushi:health'] = function(unit)
 	local min, max = UnitHealth(unit), UnitHealthMax(unit)
-	local status = not UnitIsConnected(unit) and 'Offline' or UnitIsGhost(unit) and 'Ghost' or UnitIsDead(unit) and 'Dead'
+	local status = _TAGS['offline'](unit) or _TAGS['dead'](unit)
 
 	if(status) then
 		return status
 	elseif(unit == 'player' and min ~= max) then
-		return ('|cffff8080%d|r %d%%'):format(min - max, min / max * 100)
+		return ('|cffff8080%d|r %d%%'):format(ShortenValue(min - max), min / max * 100)
 	elseif(unit == 'target' and UnitCanAttack('player', unit)) then
 		return ('%s (%d%%)'):format(ShortenValue(min), min / max * 100)
 	elseif(min ~= max) then
 		return ('%s/%s'):format(ShortenValue(min), ShortenValue(max))
 	else
-		return max
+		return ShortenValue(max)
 	end
 end
 

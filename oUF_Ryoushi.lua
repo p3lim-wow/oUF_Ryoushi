@@ -78,12 +78,6 @@ oUF.Tags['ryoushi:spell'] = function(unit)
 	return UnitCastingInfo(unit) or UnitChannelInfo(unit)
 end
 
-oUF.TagEvents['ryoushi:threat'] = 'UNIT_THREAT_LIST_UPDATE'
-oUF.Tags['ryoushi:threat'] = function(unit)
-	local _, _, percent = UnitDetailedThreatSituation(unit, unit..'target')
-	return percent and percent > 0 and percent
-end
-
 local UnitSpecific = {
 	player = function(self)
 		local castbar = CreateFrame('StatusBar', nil, self)
@@ -104,12 +98,6 @@ local UnitSpecific = {
 		power:SetJustifyH('LEFT')
 		power.frequentUpdates = 1/10
 		self:Tag(power, '[ryoushi:power][ | >ryoushi:spell]')
-
-		local threat = self.Health:CreateFontString(nil, 'OVERLAY')
-		threat:SetPoint('CENTER')
-		threat:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
-		threat:SetJustifyH('CENTER')
-		self:Tag(threat, '[threatcolor][ryoushi:threat]')
 	end,
 	target = function(self)
 		local power = CreateFrame('StatusBar', nil, self)

@@ -27,6 +27,7 @@ local function PostCreateAura(element, button)
 
 	button.cd:SetReverse()
 	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	button.count:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 end
 
 local function PostUpdateDebuff(element, unit, button, index)

@@ -204,12 +204,12 @@ oUF:Factory(function(self)
 	self:SetActiveStyle('Ryoushi')
 
 	local player = self:Spawn('player')
-	player:SetPoint('CENTER', -100, 100) -- XXX: find a better spot
+	player:SetPoint('CENTER', -300, -100)
 
 	local target = self:Spawn('target')
 	target:SetPoint('BOTTOM', player, 'TOP', 0, 16)
 
-	self:Spawn('targettarget'):SetPoint('TOPRIGHT', target, 'BOTTOMRIGHT', 0, -1)
-	self:Spawn('focus'):SetPoint('TOPLEFT', target, 'BOTTOMLEFT', 0, -1)
-	self:Spawn('pet'):SetPoint('TOPLEFT', player, 'BOTTOMLEFT', 0, -1)
+	self:Spawn('targettarget'):SetPoint('TOPRIGHT', target, 'BOTTOMRIGHT', -2, -1)
+	self:Spawn('focus'):SetPoint('TOPLEFT', target, 'BOTTOMLEFT', 2, -1)
+	self:Spawn('pet'):SetPoint('TOPLEFT', player, 'BOTTOMLEFT', 2, -1)
 end)

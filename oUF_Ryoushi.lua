@@ -30,6 +30,15 @@ local function PostCreateAura(element, button)
 	button.count:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 end
 
+local function UpdatePrediction(self, event, unit)
+	if(self.unit ~= unit) then return end
+	local prediction = self.HealPrediction
+
+	local max = UnitHealthMax(unit)
+	prediction:SetMinMaxValues(0, max)
+	prediction:SetValue(math.max(UnitHealth(unit) + UnitGetIncomingHeals(unit), max))
+end
+
 local function ShortenValue(value)
 	if(value >= 1e6) then
 		return ('%.2fm'):format(value / 1e6):gsub('%.?0+([km])$', '%1')
@@ -37,6 +46,18 @@ local function ShortenValue(value)
 		return ('%.1fk'):format(value / 1e3):gsub('%.?0+([km])$', '%1')
 	else
 		return value
+	end
+end
+
+oUF.Tags['ryoushi:missing'] = function(unit)
+	local min, max = UnitHealth(unit), UnitHealthMax(unit)
+
+	if(UnitIsDeadOrGhost(unit)) then
+		return '|cffff0000X|r'
+	elseif(not UnitIsConnected(unit)) then
+		return '|cff333333#|r'
+	elseif(min / max < 0.8) then
+		return ('|cffff8080%.1f|r'):format((max - min) / 1e3)
 	end
 end
 
@@ -64,6 +85,23 @@ oUF.Tags['ryoushi:power'] = function(unit)
 
 		return ('%s%s|r'):format(Hex(_COLORS.power[type]), ShortenValue(power))
 	end
+end
+
+oUF.TagEvents['ryoushi:leader'] = 'PARTY_LEADER_CHANGED'
+oUF.Tags['ryoushi:leader'] = function(unit)
+	return UnitIsPartyLeader(unit) and '|cffffff00!|r'
+end
+
+oUF.TagEvents['ryoushi:shield'] = 'UNIT_AURA'
+oUF.Tags['ryoushi:shield'] = function(unit)
+	local _, _, _, _, _, _, _, caster = UnitAura(unit, 'Earth Shield')
+	return caster == 'player' and '|cff00ff00.|r'
+end
+
+oUF.TagEvents['ryoushi:riptide'] = 'UNIT_AURA'
+oUF.Tags['ryoushi:riptide'] = function(unit)
+	local _, _, _, _, _, _, _, caster = UnitAura(unit, 'Riptide')
+	return caster == 'player' and '|cff0090ff.|r'
 end
 
 oUF.Tags['ryoushi:spell'] = function(unit)
@@ -127,6 +165,41 @@ local UnitSpecific = {
 		self:Tag(name, '[name][ |cff0090ff>rare<|r]')
 
 		self.Debuffs.filter = 'PLAYER|HARMFUL'
+	end,
+	raid = function(self)
+		local prediction = CreateFrame('StatusBar', nil, self)
+		prediction:SetAllPoints(self.Health)
+		prediction:SetStatusBarTexture(TEXTURE)
+		prediction:SetStatusBarColor(0, 1, 0, 0.5)
+		prediction.Override = UpdatePrediction
+		self.HealPrediction = prediction
+
+		local missing = self.Health:CreateFontString(nil, 'ARTWORK')
+		missing:SetPoint('RIGHT', -2, 0)
+		missing:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
+		missing:SetJustifyH('RIGHT')
+		missing.frequentUpdates = true
+		self:Tag(missing, '[ryoushi:missing]')
+
+		local name = self.Health:CreateFontString(nil, 'ARTWORK')
+		name:SetPoint('LEFT', 4, 0)
+		name:SetPoint('RIGHT', missing, 'LEFT', -2, 0)
+		name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
+		name:SetJustifyH('LEFT')
+		self:Tag(name, '[ryoushi:leader][raidcolor][name]')
+
+		local shield = self.Health:CreateFontString(nil, 'ARTWORK')
+		shield:SetPoint('TOPLEFT', -3, 16)
+		shield:SetFont([=[Fonts\FRIZQT__.TTF]=], 25, 'OUTLINEMONOCHROME')
+		self:Tag(shield, '[ryoushi:shield]')
+
+		local riptide = self.Health:CreateFontString(nil, 'ARTWORK')
+		riptide:SetPoint('BOTTOMLEFT', -3, -2)
+		riptide:SetFont([=[Fonts\FRIZQT__.TTF]=], 25, 'OUTLINEMONOCHROME')
+		self:Tag(shield, '[ryoushi:riptide]')
+
+		self:SetAttribute('initial-height', 19)
+		self:SetAttribute('initial-width', 50)
 	end
 }
 
@@ -136,9 +209,8 @@ local function Shared(self, unit)
 	self:RegisterForClicks('AnyUp')
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
-	self.menu = SpawnMenu
 
-	if(unit == 'player' or unit == 'target') then
+	if(unit ~= 'focus' and unit ~= 'targettarget') then
 		local health = CreateFrame('StatusBar', nil, self)
 		health:SetPoint('TOPRIGHT')
 		health:SetPoint('TOPLEFT')
@@ -157,8 +229,21 @@ local function Shared(self, unit)
 		bg:SetBackdropColor(0, 0, 0, 0.5)
 		bg:SetBackdropBorderColor(0, 0, 0)
 
-		local value = health:CreateFontString(nil, 'OVERLAY')
-		value:SetPoint('RIGHT', health, -2, 0)
+		self.menu = SpawnMenu
+	else
+		local name = self:CreateFontString(nil, 'OVERLAY')
+		name:SetAllPoints()
+		name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
+		name:SetJustifyH(unit == 'focus' and 'LEFT' or 'RIGHT')
+		self:Tag(name, '[raidcolor][name]')
+
+		self:SetAttribute('initial-height', 12)
+		self:SetAttribute('initial-width', 110)
+	end
+
+	if(unit == 'player' or unit == 'target') then
+		local value = self.Health:CreateFontString(nil, 'OVERLAY')
+		value:SetPoint('RIGHT', self.Health, -2, 0)
 		value:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
 		value:SetJustifyH('RIGHT')
 		value.frequentUpdates = 1/4
@@ -176,15 +261,6 @@ local function Shared(self, unit)
 
 		self:SetAttribute('initial-height', 19)
 		self:SetAttribute('initial-width', 220)
-	else
-		local name = self:CreateFontString(nil, 'OVERLAY')
-		name:SetAllPoints()
-		name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
-		name:SetJustifyH(unit == 'focus' and 'LEFT' or 'RIGHT')
-		self:Tag(name, '[raidcolor][name]')
-
-		self:SetAttribute('initial-height', 12)
-		self:SetAttribute('initial-width', 110)
 	end
 
 	if(UnitSpecific[unit]) then
@@ -204,4 +280,18 @@ oUF:Factory(function(self)
 
 	self:Spawn('targettarget'):SetPoint('TOPRIGHT', target, 'BOTTOMRIGHT', -2, -1)
 	self:Spawn('focus'):SetPoint('TOPLEFT', target, 'BOTTOMLEFT', 2, -1)
+
+	self:SpawnHeader(nil, nil, 'raid,party',
+		'showPlayer', true,
+		'showParty', true,
+		'showRaid', true,
+		'point', 'TOP',
+		'groupingOrder', '1,2,3,4,5',
+		'groupBy', 'GROUP',
+		'sortMethod', 'NAME', -- XXX: temporary due to bug in oUF (?)
+		'maxColumns', 5,
+		'unitsPerColumn', 5,
+		'columnSpacing', 5,
+		'columnAnchorPoint', 'RIGHT'
+	):SetPoint('TOPRIGHT', player, 'BOTTOMRIGHT', 0, -5)
 end)

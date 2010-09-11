@@ -58,10 +58,11 @@ oUF.Tags['ryoushi:health'] = function(unit)
 end
 
 oUF.Tags['ryoushi:power'] = function(unit)
-	local power = UnitPower(unit)
-	if(power > 0 and not UnitIsDeadOrGhost(unit)) then
+	if(not UnitIsDeadOrGhost(unit)) then
+		local power = UnitPower(unit)
 		local _, type = UnitPowerType(unit)
-		return ('%s%d|r'):format(Hex(_COLORS.power[type]), power) -- XXX: check with vehicles
+
+		return ('%s%s|r'):format(Hex(_COLORS.power[type]), ShortenValue(power))
 	end
 end
 

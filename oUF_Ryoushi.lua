@@ -47,7 +47,7 @@ oUF.Tags['ryoushi:health'] = function(unit)
 	if(status) then
 		return status
 	elseif(unit == 'player' and min ~= max) then
-		return ('|cffff8080%d|r %d%%'):format(ShortenValue(min - max), min / max * 100)
+		return ('|cffff8080-%s|r %d%%'):format(ShortenValue(math.abs(min - max)), min / max * 100)
 	elseif(unit == 'target' and UnitCanAttack('player', unit)) then
 		return ('%s (%d%%)'):format(ShortenValue(min), min / max * 100)
 	elseif(min ~= max) then

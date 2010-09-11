@@ -66,10 +66,6 @@ oUF.Tags['ryoushi:power'] = function(unit)
 	end
 end
 
-oUF.Tags['ryoushi:pet'] = function(unit)
-	return GetPetHappiness() and Hex(_COLORS.happiness[GetPetHappiness()]) .. _TAGS['perhp'](unit)
-end
-
 oUF.Tags['ryoushi:spell'] = function(unit)
 	return UnitCastingInfo(unit) or UnitChannelInfo(unit)
 end
@@ -131,14 +127,6 @@ local UnitSpecific = {
 		self:Tag(name, '[name][ |cff0090ff>rare<|r]')
 
 		self.Debuffs.filter = 'PLAYER|HARMFUL'
-	end,
-	pet = function(self)
-		local health = self:CreateFontString(nil, 'OUTLINE')
-		health:SetAllPoints()
-		health:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
-		health:SetJustifyH('LEFT')
-		health.frequentUpdates = 1/4
-		self:Tag(health, '[ryoushi:pet<%]')
 	end
 }
 
@@ -189,13 +177,11 @@ local function Shared(self, unit)
 		self:SetAttribute('initial-height', 19)
 		self:SetAttribute('initial-width', 220)
 	else
-		if(unit ~= 'pet') then
-			local name = self:CreateFontString(nil, 'OVERLAY')
-			name:SetAllPoints()
-			name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
-			name:SetJustifyH(unit == 'focus' and 'LEFT' or 'RIGHT')
-			self:Tag(name, '[raidcolor][name]')
-		end
+		local name = self:CreateFontString(nil, 'OVERLAY')
+		name:SetAllPoints()
+		name:SetFont(FONT, 8, 'OUTLINEMONOCHROME')
+		name:SetJustifyH(unit == 'focus' and 'LEFT' or 'RIGHT')
+		self:Tag(name, '[raidcolor][name]')
 
 		self:SetAttribute('initial-height', 12)
 		self:SetAttribute('initial-width', 110)
@@ -218,5 +204,4 @@ oUF:Factory(function(self)
 
 	self:Spawn('targettarget'):SetPoint('TOPRIGHT', target, 'BOTTOMRIGHT', -2, -1)
 	self:Spawn('focus'):SetPoint('TOPLEFT', target, 'BOTTOMLEFT', 2, -1)
-	self:Spawn('pet'):SetPoint('TOPLEFT', player, 'BOTTOMLEFT', 2, -1)
 end)
